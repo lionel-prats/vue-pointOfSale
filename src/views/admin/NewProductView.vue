@@ -1,5 +1,8 @@
 <script setup>
     import Link from "@/components/Link.vue"
+    import useImage from "@/composables/useImage"
+
+    const { url, isImgeUploaded, onFileChange } = useImage()
 </script>
 
 <template>
@@ -30,8 +33,19 @@
                         validation="required"
                         :validation-messages="{ required: 'La Imagen del Producto es Obligatoria'}"
                         accept=".jpg" 
+                        @change="onFileChange"
                     />
                     <!-- con el atributo multiple="true" habilitamos a cargar multiples imagenes en el input file (v317) -->
+
+                    <div v-if="isImgeUploaded">
+                        <p class="font-black">Imagen Producto:</p>
+                        <img 
+                            class="w-32" 
+                            :src="url" 
+                            alt="nueva imagen producto"
+                        >
+                    </div>
+
 
                     <FormKit 
                         type="select"

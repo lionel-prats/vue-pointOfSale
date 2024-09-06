@@ -1,7 +1,7 @@
 import { ref, computed } from "vue"
 
-// useFirebaseStorage() -> funcion de vuefire para autenticar nuestra app vue con nuestro backend Firebase
-import { useFirebaseStorage } from "vuefire" // v327
+// useFirebaseStorage() -> composable de vuefire para autenticar y conectar nuestra app vue con el servicio de Storage de Firebase (almacenamiento de archivos) para poder subir imagenes (v327)
+import { useFirebaseStorage } from "vuefire"
 
 // ref() -> funcion para obtener una referencia a lal ubicacion en el storage donde almacenaremos una nueva imagen (v327)
 // uploadBytesResumable() -> funcion para subir archivos al storage de Firebase (v327)
@@ -34,7 +34,7 @@ export default function useImage() {
         uploadTask.on("state_changed",
 
             // este callback se ejecuta cuando la imagen se empieza a subir y cuando se termina de subir pudiendo acceder a cierta informacion (v327)
-            (informacionCallback1) => console.log(informacionCallback1),
+            (informacionCallback1) => console.log("desde el callback #1 en useImage.js", informacionCallback1),
 
             // este callback se ejecuta si ocurrio algun error durante la subida de la imagen y el upload falló (v327)
             (error) => console.log(error),
@@ -42,12 +42,12 @@ export default function useImage() {
             // este callback se ejecuta si la imagen se subio correctamente (v327)
             (informacionCallback3) =>  {
 
-                console.log(informacionCallback3);
+                console.log("desde el callback #3 en useImage.js", informacionCallback3);
 
                 // getDownloadURL es una Promise entonces uso .then; pasandole uploadTask.snapshot.ref me retornará la URL de la imagen que acbo de subir al storage para poder accederla desde el (v327)
                 getDownloadURL(uploadTask.snapshot.ref)
                     .then( ( downloadURL ) => {
-                        url.value = downloadURL // almaceno la url de la imagen subida en el state (v328)
+                        url.value = downloadURL // almaceno en el state la url de la imagen recien subida (v328)
                     })
             },
         )

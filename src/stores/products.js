@@ -1,7 +1,16 @@
 import { computed } from "vue"
 import { defineStore } from "pinia"
 
+// useFirestore() -> composable de vuefire para autenticar y conectar nuestra app vue con el servicio Cloud Firestore de Firebase (servicio de base de datos) para poder hacer el CRUD en products (v332)
+import { useFirestore } from "vuefire"
+
+// funciones de Firebase para poder ejecutar acciones de CRUD en la DB (v332)
+import { collection, addDoc } from "firebase/firestore"; 
+
 export const useProductsStore = defineStore("products", () => {
+
+    // instancia de la conexion a Cloud Firestore (v332)
+    const db = useFirestore() 
 
     const categories = [
         { id: 1, name: "Sudaderas" }, 
@@ -9,8 +18,9 @@ export const useProductsStore = defineStore("products", () => {
         { id: 3, name: "Lentes" },
     ]
 
+    // funcion para realizar el INSERT en products 
     async function createProduct(product) {
-        console.log("product");
+        await addDoc(collection(db, "products"), product);
     }
 
     // este getter retornará el array formateado como indica la documentacion de Formkit, con el que terminamos armando el select de src\views\admin\NewProductView.vue (v330)

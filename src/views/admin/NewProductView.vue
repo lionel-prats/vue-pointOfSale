@@ -1,12 +1,13 @@
 <script setup>
     import { reactive } from "vue"
-
+    import { useRouter } from "vue-router"
     import Link from "@/components/Link.vue"
     import useImage from "@/composables/useImage"
     import { useProductsStore } from "@/stores/products" // store de Pinia (v329)
 
     const { url, isImgeUploaded, onFileChange } = useImage()
     const products = useProductsStore() // store de Pinia (v329)
+    const router = useRouter()
 
     const formData = reactive({
         name: "",
@@ -16,8 +17,19 @@
         image: "",
     })
 
-    const submitHandler = data => {
-        console.log(data);
+    const submitHandler = async data => {
+
+        // armo el objeto values con la data para el INSERT en DB del producto a crear, incluyendo en el campo image la URL de la imagen ya subida al storage de Firebase (v331)
+        const { image, ...values } = data
+        values.image = url.value
+
+        // ejecuto la accion createProduct del store de Pinia products, pasandole el objeto values con la data, ya que esta accion realizará la peticion para el INSERT en DB (v331)
+        try {
+            await products.createProduct(values)
+            router.push({name: 'products'}) // luego del INSERT redirijo al usuario
+        } catch (error) {
+            console.log(error);
+        }
     }
 
 </script>

@@ -2,10 +2,10 @@ import { computed } from "vue"
 import { defineStore } from "pinia"
 
 // useFirestore() -> composable de vuefire para autenticar y conectar nuestra app vue con el servicio Cloud Firestore de Firebase (servicio de base de datos) para poder hacer el CRUD en products (v332)
-import { useFirestore } from "vuefire"
+import { useFirestore, useCollection } from "vuefire"
 
 // funciones de Firebase para poder ejecutar acciones de CRUD en la DB (v332)
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc, where, query, limit, orderBy } from "firebase/firestore"; 
 
 export const useProductsStore = defineStore("products", () => {
 
@@ -17,6 +17,16 @@ export const useProductsStore = defineStore("products", () => {
         { id: 2, name: "Tenis" },
         { id: 3, name: "Lentes" },
     ]
+
+    const q = query(
+        collection(db, "products"),
+        // where("category", "==", 3),
+        // limit(2),
+        orderBy('name', 'desc'),
+    )
+
+    // SELECT a la DB (333)
+    const productsCollection = useCollection(q) 
 
     // funcion para realizar el INSERT en products 
     async function createProduct(product) {
@@ -35,11 +45,15 @@ export const useProductsStore = defineStore("products", () => {
         return options
     })
 
+    const noResults = computed( () => productsCollection.value.length === 0)
+
     return {
         // states
+        productsCollection,
 
         // getters
         categoryOptions,
+        noResults,
 
         // acciones
         createProduct,

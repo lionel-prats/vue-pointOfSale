@@ -5,7 +5,7 @@
     import useImage from "@/composables/useImage"
     import { useProductsStore } from "@/stores/products" // store de Pinia (v329)
 
-    const { url, isImgeUploaded, onFileChange } = useImage()
+    const { url, isImageUploaded, onFileChange } = useImage()
     const products = useProductsStore() // store de Pinia (v329)
     const router = useRouter()
 
@@ -35,7 +35,7 @@
 </script>
 
 <template>
-    <div>
+    <div class="mt-10">
         <Link to="products">Volver</Link>
         <h1 class="text-4xl font-black my-10">Nuevo Producto</h1>
         <div class="flex justify-center bg-white shadow">
@@ -68,10 +68,10 @@
                         @change="onFileChange"
                         v-model.trim="formData.image"
                     />
-                    <!-- con el atributo multiple="true" habilitamos a cargar multiples imagenes en el input file (v317) -->
+                    <!-- con el atributo multiple="true" habilitamos a cargar multiples imagenes en el input file, por default su valor es false (v317) -->
 
                     <!-- preview imagen -->
-                    <div v-if="isImgeUploaded">
+                    <div v-if="isImageUploaded">
                         <p class="font-black">Imagen Producto:</p>
                         <img 
                             class="w-32" 

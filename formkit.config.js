@@ -34,9 +34,9 @@ const config = {
                 // message: "text-red-500",
             },
             
-            // en este objeto aplicamos clases de tailwind a inputs submit de nuestros forms de Formkit (v323)
+            // en este objeto aplicamos clases de tailwind a inputs o buttons submit de nuestros forms de Formkit (v323)
             submit: {
-                // con $reset elimino para los inputs submit los estilos globales definidos mas arriba para todos los inputs, y luego aplico los estilos que le quiero dar a todos los inputs submit de los form de Formkit (v323)
+                // con $reset elimino para los inputs o buttons submit los estilos globales definidos mas arriba para todos los inputs, y luego aplico los estilos que le quiero dar a todos los inputs submit de los form de Formkit (v323)
                 input: "$reset bg-green-400 hover:bg-green-500 w-full p-2 font-bold uppercase disabled:opacity-50"
             },
 

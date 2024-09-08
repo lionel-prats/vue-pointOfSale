@@ -5,9 +5,6 @@
 
     const products = useProductsStore()
 
-
-
-
 </script>
 <template>
     <div>

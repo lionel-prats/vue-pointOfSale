@@ -13,7 +13,7 @@ import { uid } from "uid"
 export default function useImage() {
     
     const url = ref("")
-
+    
     // con esta linea conecto mi app vue con el Storage de Firebase (la conexion se logra gracias a las credenciales que me dio Firebase cuando cree el backend y que tengo almacenadas en .env.local; de alguna manera en esta linea estoy utilizando esas credenciales y conectando esta app vue con el storage de Firebase) (v327)
     const storage = useFirebaseStorage()
 
@@ -53,7 +53,7 @@ export default function useImage() {
         )
     }
 
-    const isImgeUploaded = computed( () => {
+    const isImageUploaded = computed( () => {
         return url.value ? url.value : null
     })
 
@@ -62,7 +62,7 @@ export default function useImage() {
         url, 
 
         // getters
-        isImgeUploaded,    
+        isImageUploaded,    
 
         // acciones
         onFileChange,

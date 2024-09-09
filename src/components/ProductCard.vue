@@ -1,4 +1,5 @@
 <script setup>
+    import { useCartStore } from "@/stores/cart"
     import { formatCurrency } from "@/helpers"
 
     defineProps({
@@ -6,6 +7,9 @@
             type: Object,
         },
     })
+
+    const cart = useCartStore()
+
 </script>
 
 <template>
@@ -23,6 +27,7 @@
         <button
             type="button"
             class="absolute top-5 -right-4"
+            @click="cart.addItem(product)"
         >
             <!-- Hero Icons -->
             <svg 

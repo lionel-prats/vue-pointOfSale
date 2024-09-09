@@ -1,4 +1,4 @@
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { defineStore } from "pinia"
 
 // useFirestore() -> composable de vuefire para autenticar y conectar nuestra app vue con el servicio Cloud Firestore de Firebase (servicio de base de datos) para poder hacer el CRUD en products (v332)
@@ -22,6 +22,7 @@ export const useProductsStore = defineStore("products", () => {
     // con esta linea conecto mi app vue con el Storage de Firebase (la conexion se logra gracias a las credenciales que me dio Firebase cuando cree el backend y que tengo almacenadas en .env.local; de alguna manera en esta linea estoy utilizando esas credenciales y conectando esta app vue con el storage de Firebase)
     const storage = useFirebaseStorage()
 
+    const selectedCategory = ref(1)
     const categories = [
         { id: 1, name: "Sudaderas" }, 
         { id: 2, name: "Tenis" },
@@ -114,13 +115,22 @@ export const useProductsStore = defineStore("products", () => {
 
     const noResults = computed( () => productsCollection.value.length === 0)
 
+    const filteredProducts = computed( () => {
+        return productsCollection.value.filter( product => product.category === selectedCategory.value)
+    })
+
     return {
+        // vars/consts
+        categories,
+
         // states
         productsCollection,
+        selectedCategory,
 
         // getters
         categoryOptions,
         noResults,
+        filteredProducts,
 
         // acciones
         createProduct,

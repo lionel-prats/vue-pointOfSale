@@ -1,10 +1,17 @@
 import { ref, computed, watchEffect } from "vue"
 import { defineStore } from "pinia"
 import { useCouponStore } from "@/stores/coupons"
+import { getCurrentDate } from "@/helpers"
+
+// funciones de vuefire y de firebase para registrar las ventas en la db (v365)
+import { useFirestore } from "vuefire"
+import { collection, addDoc } from "firebase/firestore"; 
 
 export const useCartStore = defineStore("cart", () => {
 
     const coupon = useCouponStore()
+
+    const db = useFirestore() // conexion a Cloud Firestore
 
     const items = ref([])
     const subtotal = ref(0)
@@ -16,8 +23,8 @@ export const useCartStore = defineStore("cart", () => {
 
     watchEffect( () => { 
         subtotal.value = items.value.reduce( (total, item) => total + (item.quantity * item.price), 0)
-        taxes.value = subtotal.value * TAX_RATE
-        total.value = (subtotal.value + taxes.value) - coupon.discount
+        taxes.value = Number((subtotal.value * TAX_RATE).toFixed(2))
+        total.value = Number( ( (subtotal.value + taxes.value) - coupon.discount).toFixed(2) )
     })
 
     function addItem(item) {
@@ -39,6 +46,25 @@ export const useCartStore = defineStore("cart", () => {
 
     function removeItem(id) {
         items.value = items.value.filter(item => item.id !== id)
+    }
+
+    
+    async function checkout() {
+        try {
+            await addDoc(collection(db, "sales"), {
+                items: items.value.map( item => {
+                    const { availability, category, ...data} = item
+                    return data
+                }),
+                subtotal: subtotal.value,
+                taxes: taxes.value,
+                discount: coupon.discount,
+                total: total.value,
+                date: getCurrentDate(),
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const isItemInCart = id => items.value.findIndex(item => item.id === id)
@@ -70,5 +96,6 @@ export const useCartStore = defineStore("cart", () => {
         addItem,
         updateQuantity,
         removeItem,
+        checkout,
     }
 })

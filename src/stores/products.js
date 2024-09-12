@@ -116,7 +116,14 @@ export const useProductsStore = defineStore("products", () => {
     const noResults = computed( () => productsCollection.value.length === 0)
 
     const filteredProducts = computed( () => {
-        return productsCollection.value.filter( product => product.category === selectedCategory.value)
+
+        // solucion de Valdez para aplicar filtro por categoria y disponibilidad (v369)
+        // return productsCollection.value
+        //     .filter( product => product.category === selectedCategory.value)
+        //     .filter( product => product.availability > 0)
+
+        // solucion LIO ya que es mas performante (v369)
+        return productsCollection.value.filter( product => product.category === selectedCategory.value && product.availability > 0)
     })
 
     return {

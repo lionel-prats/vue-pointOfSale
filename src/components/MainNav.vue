@@ -30,7 +30,7 @@
             </div>
         </div>
         <nav>
-            <Link to="admin">
+            <Link to="sales">
                 Administrar
             </Link>
         </nav>

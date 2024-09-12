@@ -6,10 +6,12 @@ export const useCouponStore = defineStore("coupon", () => {
 
     const cart = useCartStore()
 
+    // state
     const couponInput = ref("")
     const couponValidationMessage = ref("")
     const discountPercentage = ref(0)
     const discount = ref(0)
+    // fin state
 
     const VALID_COUPONS = [
         { name: "10DESCUENTO", discount: .10 },
@@ -36,6 +38,14 @@ export const useCouponStore = defineStore("coupon", () => {
         
     }
 
+    // funcion para resetear el state del store (nombrar a la funcion $reset es una convencion) (v366)
+    function $reset() {
+        couponInput.value = ""
+        couponValidationMessage.value = ""
+        discountPercentage.value = 0
+        discount.value = 0
+    }
+
     const isValidCoupon = computed ( () => discountPercentage.value > 0 ) 
 
     return {
@@ -51,5 +61,6 @@ export const useCouponStore = defineStore("coupon", () => {
         
         // actions
         applyCoupon,
+        $reset,
     }
 })

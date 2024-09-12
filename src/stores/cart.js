@@ -4,8 +4,9 @@ import { useCouponStore } from "@/stores/coupons"
 import { getCurrentDate } from "@/helpers"
 
 // funciones de vuefire y de firebase para registrar las ventas en la db (v365)
+// runTransaction -> funcion de Firebase para realizar transacciones en la DB (v368)
 import { useFirestore } from "vuefire"
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc, runTransaction, doc } from "firebase/firestore"; 
 
 export const useCartStore = defineStore("cart", () => {
 
@@ -13,11 +14,13 @@ export const useCartStore = defineStore("cart", () => {
 
     const db = useFirestore() // conexion a Cloud Firestore
 
+    // state
     const items = ref([])
     const subtotal = ref(0)
     const taxes = ref(0)
     const total = ref(0)
-
+    // fin state
+    
     const MAX_PRODUCTS = 5
     const TAX_RATE = .10 // impuestos (v353) 
 
@@ -48,9 +51,10 @@ export const useCartStore = defineStore("cart", () => {
         items.value = items.value.filter(item => item.id !== id)
     }
 
-    
     async function checkout() {
         try {
+
+            // INSERT de la compra realizada en sales
             await addDoc(collection(db, "sales"), {
                 items: items.value.map( item => {
                     const { availability, category, ...data} = item
@@ -62,9 +66,32 @@ export const useCartStore = defineStore("cart", () => {
                 total: total.value,
                 date: getCurrentDate(),
             });
+
+            // UPDATE en products para restarle a la cantidad de cada producto incluido en la compra realizada, la cantidad de producto comprado para cada articulo (v368)
+            items.value.forEach( async(item) => { // itero los productos incluidos en la compra
+                const productRef = doc(db, "products", item.id) // referencia al producto iterado en la DB
+                await runTransaction(db, async (transaction) => {
+                    const currentProduct = await transaction.get(productRef)
+                    const availability = currentProduct.data().availability - item.quantity // calculo la nueva cantidad disponible del producto iterado
+                    transaction.update(productRef, { availability }) // UPDATEO la cantidad disponible del producto iterado en la DB
+                })
+            })  
+
+            // reinicio los states de cart y de coupon una vez que la compra se ha registrado en la DB (v366)
+            $reset()
+            coupon.$reset()
+
         } catch (error) {
             console.log(error);
         }
+    }
+
+    // funcion para resetear el state del store (nombrar a la funcion $reset es una convencion) (v366)
+    function $reset() {
+        items.value = []
+        subtotal.value = 0
+        taxes.value = 0
+        total.value = 0
     }
 
     const isItemInCart = id => items.value.findIndex(item => item.id === id)

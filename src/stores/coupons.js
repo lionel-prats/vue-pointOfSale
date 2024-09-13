@@ -35,7 +35,6 @@ export const useCouponStore = defineStore("coupon", () => {
         setTimeout(() => {
             couponValidationMessage.value = "" 
         }, 4000);
-        
     }
 
     // funcion para resetear el state del store (nombrar a la funcion $reset es una convencion) (v366)
